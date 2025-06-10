@@ -1,4 +1,36 @@
-./kubeenv
-./airbnb_agent/.env
-./weather_agent/.env
-./host_agent/adk_agent/.env
+kubeenv/
+airbnb_agent/.env
+weather_agent/.env
+host_agent/adk_agent/.env
+
+# Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
