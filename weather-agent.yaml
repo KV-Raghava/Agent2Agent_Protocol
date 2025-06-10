@@ -1,0 +1,38 @@
+# weather-agent.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: weather-agent
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: weather-agent
+  template:
+    metadata:
+      labels:
+        app: weather-agent
+    spec:
+      nodeSelector:
+        agent-type: weather
+      containers:
+      - name: weather-agent
+        image: weather-agent:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 10001
+        envFrom:
+        - configMapRef:
+            name: agent-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: weather-agent-service
+spec:
+  selector:
+    app: weather-agent
+  ports:
+  - port: 10001
+    targetPort: 10001
+  type: ClusterIP

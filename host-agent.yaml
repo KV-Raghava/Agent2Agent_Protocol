@@ -1,0 +1,38 @@
+# host-agent.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: host-agent
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: host-agent
+  template:
+    metadata:
+      labels:
+        app: host-agent
+    spec:
+      nodeSelector:
+        agent-type: host
+      containers:
+      - name: host-agent
+        image: host-agent:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8083
+        envFrom:
+        - configMapRef:
+            name: agent-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: host-agent-service
+spec:
+  selector:
+    app: host-agent
+  ports:
+  - port: 8083
+    targetPort: 8083
+  type: LoadBalancer

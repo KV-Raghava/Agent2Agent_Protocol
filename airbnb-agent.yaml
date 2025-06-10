@@ -1,0 +1,38 @@
+# airbnb-agent.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: airbnb-agent
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: airbnb-agent
+  template:
+    metadata:
+      labels:
+        app: airbnb-agent
+    spec:
+      nodeSelector:
+        agent-type: airbnb
+      containers:
+      - name: airbnb-agent
+        image: airbnb-agent:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 10002
+        envFrom:
+        - configMapRef:
+            name: agent-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: airbnb-agent-service
+spec:
+  selector:
+    app: airbnb-agent
+  ports:
+  - port: 10002
+    targetPort: 10002
+  type: ClusterIP

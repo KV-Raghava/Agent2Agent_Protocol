@@ -1,0 +1,4 @@
+./kubeenv
+./airbnb_agent/.env
+./weather_agent/.env
+./host_agent/adk_agent/.env

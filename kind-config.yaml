@@ -1,0 +1,14 @@
+# kind-config.yaml
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+nodes:
+- role: control-plane
+- role: worker
+  labels:
+    agent-type: weather
+- role: worker
+  labels:
+    agent-type: airbnb
+- role: worker
+  labels:
+    agent-type: host
