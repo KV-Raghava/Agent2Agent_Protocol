@@ -44,7 +44,12 @@ class RemoteAgentConnections:
         print(f"agent_card: {agent_card}")
         print(f"agent_url: {agent_url}")
         self._httpx_client = httpx.AsyncClient(timeout=30)
-        self.agent_client = A2AClient(self._httpx_client, agent_card, url=agent_url)
+        # Store the actual URL we should use for communication
+        self.agent_url = agent_url
+        # Create a modified agent card with the correct URL for Docker networking
+        modified_card = agent_card.model_copy()
+        modified_card.url = agent_url
+        self.agent_client = A2AClient(self._httpx_client, modified_card, url=agent_url)
         self.card = agent_card
         self.conversation_name = None
         self.conversation = None
@@ -54,5 +59,4 @@ class RemoteAgentConnections:
         return self.card
 
     async def send_message(self, message_request: SendMessageRequest) -> SendMessageResponse:
-        return  await self.agent_client.send_message(message_request)
-        
+        return await self.agent_client.send_message(message_request)

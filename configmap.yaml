@@ -4,7 +4,7 @@ kind: ConfigMap
 metadata:
   name: agent-config
 data:
-  GOOGLE_API_KEY: "AIzaSyAB0RQv-GyB5heUTbBP3jeC_4Bbt7kcQRE"
+  GOOGLE_API_KEY: "AIzaSyBkQL_63zaOEv-_SvZ8HprbMUi_l_9hXl4"
   GOOGLE_GENAI_USE_VERTEXAI: "False"
   AIR_AGENT_URL: "http://airbnb-agent-service:10002"
   WEA_AGENT_URL: "http://weather-agent-service:10001"

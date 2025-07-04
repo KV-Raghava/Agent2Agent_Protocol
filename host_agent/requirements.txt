@@ -7,5 +7,6 @@ langchain-google-genai>=2.1.4
 langchain-mcp-adapters>=0.1.1
 langgraph>=0.4.5
 mcp>=1.9.0
-protobuf>=6.31.1
 uvicorn
+fastapi>=0.104.0
+python-multipart>=0.0.6

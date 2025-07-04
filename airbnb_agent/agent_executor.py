@@ -1,3 +1,5 @@
+import asyncio
+import inspect
 from typing import Any, List
 
 import logging
@@ -35,6 +37,20 @@ class AirbnbAgentExecutor(AgentExecutor):
         )
         self.agent = AirbnbAgent(mcp_tools=mcp_tools)
 
+    async def _safe_enqueue_event(self, event_queue: EventQueue, event: Any) -> None:
+        """
+        Safely enqueue an event, handling both sync and async versions of enqueue_event.
+        """
+        try:
+            result = event_queue.enqueue_event(event)
+            # Check if the result is a coroutine (async method)
+            if inspect.iscoroutine(result):
+                await result
+            # If it's synchronous, result is None or the actual return value
+        except Exception as e:
+            logger.error(f"Error enqueueing event: {e}")
+            raise
+
     @override
     async def execute(
         self,
@@ -49,11 +65,12 @@ class AirbnbAgentExecutor(AgentExecutor):
 
         if not task:
             task = new_task(context.message)
-            event_queue.enqueue_event(task)
+            await self._safe_enqueue_event(event_queue, task)
         # invoke the underlying agent, using streaming results
         async for event in self.agent.stream(query, task.contextId):
             if event["is_task_complete"]:
-                event_queue.enqueue_event(
+                await self._safe_enqueue_event(
+                    event_queue,
                     TaskArtifactUpdateEvent(
                         append=False,
                         contextId=task.contextId,
@@ -66,7 +83,8 @@ class AirbnbAgentExecutor(AgentExecutor):
                         ),
                     )
                 )
-                event_queue.enqueue_event(
+                await self._safe_enqueue_event(
+                    event_queue,
                     TaskStatusUpdateEvent(
                         status=TaskStatus(state=TaskState.completed),
                         final=True,
@@ -75,7 +93,8 @@ class AirbnbAgentExecutor(AgentExecutor):
                     )
                 )
             elif event["require_user_input"]:
-                event_queue.enqueue_event(
+                await self._safe_enqueue_event(
+                    event_queue,
                     TaskStatusUpdateEvent(
                         status=TaskStatus(
                             state=TaskState.input_required,
@@ -91,7 +110,8 @@ class AirbnbAgentExecutor(AgentExecutor):
                     )
                 )
             else:
-                event_queue.enqueue_event(
+                await self._safe_enqueue_event(
+                    event_queue,
                     TaskStatusUpdateEvent(
                         status=TaskStatus(
                             state=TaskState.working,

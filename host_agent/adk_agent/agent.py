@@ -281,8 +281,8 @@ def _get_initialized_routing_agent_sync():
     async def _async_main():
         routing_agent_instance = await RoutingAgent.create(
             remote_agent_addresses=[
-                os.getenv("AIR_AGENT_URL", "http://localhost:10002"),
-                os.getenv("WEA_AGENT_URL", "http://localhost:10001"),
+                os.getenv("AIR_AGENT_URL", "http://host.docker.internal:10002"),
+                os.getenv("WEA_AGENT_URL", "http://host.docker.internal:10001"),
             ]
         )
         return routing_agent_instance.create_agent()

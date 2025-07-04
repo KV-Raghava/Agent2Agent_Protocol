@@ -21,6 +21,9 @@ spec:
         imagePullPolicy: Never
         ports:
         - containerPort: 8083
+        env:
+        - name: API_MODE
+          value: "api"
         envFrom:
         - configMapRef:
             name: agent-config
